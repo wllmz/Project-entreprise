@@ -7,4 +7,6 @@ const role = require('../../middleware/authMiddleware');
 // Route pour récupérer tous les utilisateurs
 router.get("/allusers",authMiddleware.verifyToken, role.AdminRole , userController.allUsers);
 
+salut
+
 module.exports = router;
