@@ -29,7 +29,6 @@ exports.changePassword = async (req, res) => {
 
         // Mettez à jour le mot de passe dans la base de données
         user.password = hashedPassword;
-        
         await user.save();
 
         // Répondez avec un message de succès
