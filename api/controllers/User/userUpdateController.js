@@ -27,7 +27,7 @@ exports.changePassword = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-        // Mettez à jour le mot de passe dans la base de données
+        // Met à jour le mot de passe dans la base de données
         user.password = hashedPassword;
         await user.save();
 
@@ -63,11 +63,11 @@ exports.changeUsername = async (req, res) => {
             return res.status(400).json({ msg: "Username already exists" });
         }
 
-        // Mettez à jour le nom d'utilisateur dans la base de données
+        // Met à jour le nom d'utilisateur dans la base de données
         user.username = newUsername;
         await user.save();
 
-        // Répondez avec un message de succès
+        // Répond avec un message de succès
         res.status(200).json({ msg: "Username updated successfully" });
     } catch (error) {
         console.error(error);
@@ -98,7 +98,7 @@ exports.updateEmail = async (req, res) => {
             return res.status(400).json({ msg: "Email already exists" });
         }
 
-        // Mettre à jour l'email dans la base de données
+        // Met à jour l'email dans la base de données
         user.email = newEmail;
         await user.save();
 

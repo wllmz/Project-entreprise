@@ -10,39 +10,39 @@ exports.register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
     
-    /** user existe ou non **/
+    // user existe ou non
     const exestingUser = await User.findOne({ email });
     if (exestingUser) {
       return res.status(400).json({ msg: "User existant" });
     }
 
-    /** hasher le mot de passe **/
+    // hasher le mot de passe 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    /** creer un nouveau user **/
+    // creer un nouveau user
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
     });
-    /*sauvegarder le nouveau user dans la base de donnée **/
+    // sauvegarder le nouveau user dans la base de donnée 
     await newUser.save();
     res
       .status(201)
       .json({ message: "User registered successfully", user: newUser });
   } catch (error) {
-    /** erreur lors de la création **/
+    // erreur lors de la création 
     console.log(error);
     res.status(500).json({ msg: "Server error" });
   }
 };
 
-/* controller login */
+// controller login 
 exports.userLogin = async (req, res) => {
   try {
     const { login , password } = req.body;
-    /* check si le user existe ou non **/
+    // check si le user existe ou non 
     const user = await User.findOne({ 
         $or: [
         { email: login }, 
@@ -51,15 +51,16 @@ exports.userLogin = async (req, res) => {
     if (!user) {
       return res.status(400).json({ msg: "User does not exist" });
     }
-    /* check si le mot de passe est correct ou non */
+    // check si le mot de passe est correct ou non 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
-    /* generer le token */
+    // generer le token 
     const payload = {
       user: {
         id: user.id,
+        role: user.role, 
       },
     };
     jwt.sign(
@@ -72,14 +73,14 @@ exports.userLogin = async (req, res) => {
       }
     );
   } catch (error) {
-    /** erreur lors de la création **/
+    // erreur lors de la création 
     console.log(error);
     res.status(500).json({ msg: "Server error" });
   }
 };
 
 
-/* controller logout */
+// controller logout
 exports.logout = (req, res) => {
     try {
         res.status(200).json({ message: 'User logged out successfully' });
