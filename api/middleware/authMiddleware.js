@@ -1,10 +1,9 @@
 
 exports.AdminRole = (req, res, next) => {
-    if (req.user.role === 'admin') {
+    console.log(req.user); // Voir ce que contient req.user
+    if (req.user && req.user.role === 'admin') {
         next();
     } else {
-        res.status(401).json({
-            message: 'Unauthorized'
-        });
+        res.status(403).json({ message: 'Access denied. Admin role required.' });
     }
 };
