@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 /* UPDATE PASSWORD */
 exports.changePassword = async (req, res) => {
     try {
+        const { id } = req.params; 
         const { oldPassword, newPassword, confirmPassword } = req.body;
         
         // Vérifiez que les nouveaux mots de passe correspondent
@@ -11,8 +12,8 @@ exports.changePassword = async (req, res) => {
             return res.status(400).json({ msg: "New passwords do not match" });
         }
         
-        // si l'identité de l'utilisateur correspond
-        const user = await User.findById(req.user.id);
+        // Trouvez l'utilisateur par ID dans les paramètres
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ msg: "User not found" });
         }
@@ -21,6 +22,11 @@ exports.changePassword = async (req, res) => {
         const isMatch = await bcrypt.compare(oldPassword, user.password);
         if (!isMatch) {
             return res.status(400).json({ msg: "Invalid old password" });
+        }
+
+        // Validation du nouveau mot de passe (exemple)
+        if (newPassword.length < 8) {
+            return res.status(400).json({ msg: "New password must be at least 8 characters long" });
         }
 
         // Hash le nouveau mot de passe
@@ -39,35 +45,40 @@ exports.changePassword = async (req, res) => {
     }
 };
 
-
 /* UPDATE USERNAME */
 exports.changeUsername = async (req, res) => {
     try {
+        const { id } = req.params; 
         const { password, newUsername } = req.body;
         
-        //l'identité de l'utilisateur
-        const user = await User.findById(req.user.id);
+        // Trouver l'utilisateur par ID dans les paramètres
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ msg: "User not found" });
         }
 
-        // si le mot de passe correspond
+        // Vérifier si l'utilisateur authentifié correspond à l'utilisateur à mettre à jour
+        if (user.id !== req.user.id) {
+            return res.status(403).json({ msg: "Unauthorized action" });
+        }
+
+        // Vérifier si le mot de passe correspond
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ msg: "Invalid password" });
         }
 
-        // si le nouvel username est déjà utilisé
+        // Vérifier si le nouvel username est déjà utilisé
         const existingUser = await User.findOne({ username: newUsername });
         if (existingUser) {
             return res.status(400).json({ msg: "Username already exists" });
         }
 
-        // Met à jour le nom d'utilisateur dans la base de données
+        // Mettre à jour le nom d'utilisateur dans la base de données
         user.username = newUsername;
         await user.save();
 
-        // Répond avec un message de succès
+        // Répondre avec un message de succès
         res.status(200).json({ msg: "Username updated successfully" });
     } catch (error) {
         console.error(error);
@@ -75,34 +86,42 @@ exports.changeUsername = async (req, res) => {
     }
 };
 
+
+
 /* UPDATE EMAIL */
 exports.updateEmail = async (req, res) => {
     try {
+        const { id } = req.params; 
         const { password, newEmail } = req.body;
         
-        // l'identité de l'utilisateur
-        const user = await User.findById(req.user.id);
+        // Trouver l'utilisateur par ID dans les paramètres
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ msg: "User not found" });
         }
 
-        // si le mot de passe correspond
+        // Vérifier si l'utilisateur authentifié correspond à l'utilisateur à mettre à jour
+        if (user.id !== req.user.id) {
+            return res.status(403).json({ msg: "Unauthorized action" });
+        }
+
+        // Vérifier si le mot de passe correspond
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ msg: "Invalid password" });
         }
 
-        // si le nouvel email est déjà utilisé par un autre utilisateur
+        // Vérifier si le nouvel email est déjà utilisé par un autre utilisateur
         const existingUser = await User.findOne({ email: newEmail });
         if (existingUser) {
             return res.status(400).json({ msg: "Email already exists" });
         }
 
-        // Met à jour l'email dans la base de données
+        // Mettre à jour l'email dans la base de données
         user.email = newEmail;
         await user.save();
 
-        // Message de succès
+        // Répondre avec un message de succès
         res.status(200).json({ msg: "Email updated successfully" });
     } catch (error) {
         console.error(error);
