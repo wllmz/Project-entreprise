@@ -42,7 +42,7 @@ exports.changeUserRole = async (req, res) => {
         user.role = newRole;
         await user.save(); 
 
-        res.status(200).json({ message: "Le rôle de l'utilisateur a été mis à jour.", user: user });
+        res.status(200).json({ message: "Le rôle de l'utilisateur a été mis à jour.", user: user.username });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Erreur serveur lors de la mise à jour du rôle de l'utilisateur." });
