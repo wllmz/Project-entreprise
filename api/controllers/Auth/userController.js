@@ -38,30 +38,32 @@ exports.register = async (req, res) => {
   }
 };
 
-// controller login 
+// Controller login
 exports.userLogin = async (req, res) => {
   try {
-    const { login , password } = req.body;
-    // check si le user existe ou non 
-    const user = await User.findOne({ 
-        $or: [
-        { email: login }, 
+    const { login, password } = req.body;
+    // Check if the user exists
+    const user = await User.findOne({
+      $or: [
+        { email: login },
         { username: login }
-    ] });
+      ]
+    });
     if (!user) {
       return res.status(400).json({ msg: "User does not exist" });
     }
-    // check si le mot de passe est correct ou non 
+    // Check if the password is correct
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
-    // generer le token 
+    // Generate the token
     const payload = {
       user: {
         id: user.id,
-        role: user.role, 
-      },
+        role: user.role,
+        username: user.username // Include username in the payload
+      }
     };
     jwt.sign(
       payload,
@@ -69,11 +71,11 @@ exports.userLogin = async (req, res) => {
       { expiresIn: 360000 },
       (err, token) => {
         if (err) throw err;
-        res.json({ token });
+        res.json({ token, user: { username: user.username } }); // Send username in the response
       }
     );
   } catch (error) {
-    // erreur lors de la création 
+    // Error during creation
     console.log(error);
     res.status(500).json({ msg: "Server error" });
   }

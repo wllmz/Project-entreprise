@@ -1,0 +1,18 @@
+import React, { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+
+const WelcomePage = () => {
+  const { authState } = useContext(AuthContext);
+
+  if (!authState || !authState.user) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div>
+      <h1>Welcome, {authState.user.username}!</h1>
+    </div>
+  );
+};
+
+export default WelcomePage;
