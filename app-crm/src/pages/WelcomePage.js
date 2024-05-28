@@ -9,9 +9,10 @@ const WelcomePage = () => {
   }
 
   return (
-    <div>
-      <h1>Welcome, {authState.user.username}!</h1>
+    <div className="text-center mt-10">
+      <h1 className="text-4xl">Welcome, {authState.user.username}!</h1>
     </div>
+    
   );
 };
 

@@ -11,5 +11,9 @@ export const login = async (login, password) => {
 };
 
 export const logout = () => {
-  // Implement logout functionality if needed, such as clearing localStorage
+  // Clear localStorage
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('authUser');
+
+  return Promise.resolve(); 
 };

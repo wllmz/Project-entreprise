@@ -71,7 +71,7 @@ exports.userLogin = async (req, res) => {
       { expiresIn: 360000 },
       (err, token) => {
         if (err) throw err;
-        res.json({ token, user: { username: user.username } }); // Send username in the response
+        res.json({ token }); 
       }
     );
   } catch (error) {

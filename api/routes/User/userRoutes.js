@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const userUpdateController = require('../../controllers/User/userUpdateController');
+const userUpdateController = require('../../controllers/User/userController');
 const jwtMiddleware = require('../../middleware/jwtMiddleware');
 
 
@@ -12,5 +12,8 @@ router.put('/username-update/:id',  jwtMiddleware.verifyToken, userUpdateControl
 
 // Mettre à jour l'email
 router.put('/email-update/:id', jwtMiddleware.verifyToken, userUpdateController.updateEmail);
+
+// information profil 
+router.get('/:id', jwtMiddleware.verifyToken, userUpdateController.getUserById);
 
 module.exports = router;
