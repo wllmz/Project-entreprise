@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ChangeUserRole from './modals/ChangeUserRole';
 import DeleteUser from './modals/DeleteUser';
-import ModalWrapper from './modals/ModalWrapper'; // Updated import
+import ModalWrapper from './modals/ModalWrapper'; 
 
 const UserList = ({ users }) => {
   const [selectedUser, setSelectedUser] = useState(null);
