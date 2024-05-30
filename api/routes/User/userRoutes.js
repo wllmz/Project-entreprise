@@ -5,7 +5,7 @@ const jwtMiddleware = require('../../middleware/jwtMiddleware');
 
 
 // Mettre à jour le mot de passe
-router.put('/mdp-udpate/:id',  jwtMiddleware.verifyToken, userUpdateController.changePassword);
+router.put('/mdp-update/:id',  jwtMiddleware.verifyToken, userUpdateController.changePassword);
 
 // Mettre à jour le nom d'utilisateur
 router.put('/username-update/:id',  jwtMiddleware.verifyToken, userUpdateController.changeUsername);

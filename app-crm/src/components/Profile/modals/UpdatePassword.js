@@ -16,6 +16,11 @@ const UpdatePassword = ({ closeModal }) => {
       return;
     }
 
+    if (newPassword !== confirmPassword) {
+      setMessage('Les nouveaux mots de passe ne correspondent pas');
+      return;
+    }
+
     try {
       const response = await updatePassword(
         authState.user.id,
@@ -25,9 +30,13 @@ const UpdatePassword = ({ closeModal }) => {
         authState.token
       );
       setMessage(response.data.msg);
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
       closeModal();
     } catch (error) {
-      setMessage(error.response.data.msg || 'Server error');
+      const errorMsg = error.response?.data?.msg || 'Server error';
+      setMessage(errorMsg);
     }
   };
 
