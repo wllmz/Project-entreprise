@@ -34,6 +34,7 @@ const UpdatePassword = ({ closeModal }) => {
       setNewPassword('');
       setConfirmPassword('');
       closeModal();
+      window.location.reload();
     } catch (error) {
       const errorMsg = error.response?.data?.msg || 'Server error';
       setMessage(errorMsg);

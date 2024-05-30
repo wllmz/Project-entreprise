@@ -19,6 +19,7 @@ const ChangeUserRole = ({ user, onClose }) => {
       const response = await changeUserRole(user._id, newRole, adminPassword, authState.token);
       setMessage(response.data.message);
       onClose();
+      window.location.reload();
     } catch (error) {
       setMessage(error.response.data.message || 'Server error');
     }

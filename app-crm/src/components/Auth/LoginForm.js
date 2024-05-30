@@ -17,7 +17,7 @@ const LoginForm = () => {
       const { token, user } = response.data;
       login(token, user); // Mettre à jour le contexte
       setError('');
-      navigate('/welcome'); 
+      navigate('/'); 
     } catch (error) {
       setError('Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.');
       console.error('Erreur lors de la connexion de l\'utilisateur', error);

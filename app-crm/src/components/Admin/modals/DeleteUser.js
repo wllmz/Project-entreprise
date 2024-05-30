@@ -18,6 +18,7 @@ const DeleteUser = ({ user, onClose }) => {
       const response = await deleteUser(user._id, adminPassword, authState.token);
       setMessage(response.data.message);
       onClose();
+      window.location.reload();
     } catch (error) {
       setMessage(error.response.data.message || 'Server error');
     }
