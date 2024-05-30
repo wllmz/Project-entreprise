@@ -1,9 +1,16 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../../context/AuthContext';
 
 const Header = () => {
-  const { authState, logout } = useContext(AuthContext);
+  const { logout, isAuthenticated } = useContext(AuthContext);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
 
   return (
     <header className="bg-gray-800 text-white p-4">
@@ -11,21 +18,25 @@ const Header = () => {
         <h1 className="text-xl font-bold">
           <Link to="/">Mon Application</Link>
         </h1>
-        <nav className="flex space-x-4">
-          {authState && authState.user ? (
-            <>
-              {authState.user.role === 'admin' && (
-                <Link to="/admin" className="hover:underline">
-                  Administration
-                </Link>
+        <nav className="flex space-x-4 items-center">
+          {isAuthenticated() ? (
+            <div className="relative">
+              <FontAwesomeIcon
+                icon={faUser}
+                className="cursor-pointer"
+                onClick={toggleDropdown}
+              />
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-20">
+                  <Link to="/profile" className="block px-4 py-2 hover:bg-gray-200">
+                    Profil
+                  </Link>
+                  <button onClick={logout} className="block w-full text-left px-4 py-2 hover:bg-gray-200">
+                    Déconnexion
+                  </button>
+                </div>
               )}
-                <Link to="/profile" className="hover:underline">
-                Profil
-              </Link>
-              <button onClick={logout} className="hover:underline">
-                Déconnexion
-              </button>
-            </>
+            </div>
           ) : (
             <>
               <Link to="/login" className="hover:underline">

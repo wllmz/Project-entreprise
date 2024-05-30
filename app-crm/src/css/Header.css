@@ -1,0 +1,7 @@
+header.bg-gray-800.text-white.p-4 {
+    z-index: 1;
+}
+
+footer.bg-gray-800.text-white.p-4.text-center {
+    z-index: 1;
+}

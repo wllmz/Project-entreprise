@@ -36,8 +36,17 @@ export const AuthProvider = ({ children }) => {
     navigate('/login');
   };
 
+  const isAuthenticated = () => {
+    return authState && authState.user;
+  };
+
+  const isAdmin = () => {
+    return isAuthenticated() && authState.user.role === 'admin';
+  };
+
+
   return (
-    <AuthContext.Provider value={{ authState, login, logout }}>
+    <AuthContext.Provider value={{ authState, login, logout, isAuthenticated, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

@@ -8,6 +8,7 @@ import Profile from './components/Profile/Profile';
 import AdminPage from './pages/AdminPage';
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
+import Sidebar from './components/Layout/Sidebar';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
       <AuthProvider>
         <div className="flex flex-col min-h-screen">
           <Header />
+             <Sidebar />
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<HomePage />} />
