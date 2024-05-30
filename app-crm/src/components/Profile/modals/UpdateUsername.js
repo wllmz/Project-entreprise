@@ -24,9 +24,10 @@ const UpdateUsername = ({ closeModal }) => {
       );
       setMessage(response.data.msg);
       closeModal();
+      window.location.reload();
     } catch (error) {
       setMessage(error.response.data.msg || 'Server error');
-    }
+    }    
   };
 
   return (
