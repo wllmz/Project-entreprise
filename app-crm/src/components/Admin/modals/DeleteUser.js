@@ -9,10 +9,6 @@ const DeleteUser = ({ user, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!authState || !authState.token) {
-      setMessage('Admin is not authenticated');
-      return;
-    }
 
     try {
       const response = await deleteUser(user._id, adminPassword, authState.token);

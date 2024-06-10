@@ -10,10 +10,6 @@ const ChangeUserRole = ({ user, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!authState || !authState.token) {
-      setMessage('Admin is not authenticated');
-      return;
-    }
 
     try {
       const response = await changeUserRole(user._id, newRole, adminPassword, authState.token);
@@ -21,7 +17,7 @@ const ChangeUserRole = ({ user, onClose }) => {
       onClose();
       window.location.reload();
     } catch (error) {
-      setMessage(error.response.data.message || 'Server error');
+      setMessage(error.response?.data?.message || 'Server error');
     }
   };
 

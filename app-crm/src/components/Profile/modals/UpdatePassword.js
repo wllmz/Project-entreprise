@@ -11,10 +11,6 @@ const UpdatePassword = ({ closeModal }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!authState || !authState.token) {
-      setMessage('User is not authenticated');
-      return;
-    }
 
     if (newPassword !== confirmPassword) {
       setMessage('Les nouveaux mots de passe ne correspondent pas');

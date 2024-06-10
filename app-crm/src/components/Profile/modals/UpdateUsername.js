@@ -10,10 +10,6 @@ const UpdateUsername = ({ closeModal }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!authState || !authState.token) {
-      setMessage('User is not authenticated');
-      return;
-    }
 
     try {
       const response = await updateUsername(
