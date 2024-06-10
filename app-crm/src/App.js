@@ -9,6 +9,7 @@ import AdminPage from './pages/AdminPage';
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
 import Sidebar from './components/Layout/Sidebar';
+import ProtectedRoute from './context/ProtectedRoute';
 
 const App = () => {
   return (
@@ -16,14 +17,14 @@ const App = () => {
       <AuthProvider>
         <div className="flex flex-col min-h-screen">
           <Header />
-             <Sidebar />
+          <Sidebar />
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+              <Route path="/admin" element={<ProtectedRoute element={<AdminPage />} adminOnly={true} />} />
             </Routes>
           </main>
           <Footer />

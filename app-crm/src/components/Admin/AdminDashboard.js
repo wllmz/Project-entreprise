@@ -9,11 +9,6 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      if (!authState || !authState.token) {
-        console.error('Admin is not authenticated');
-        return;
-      }
-
       try {
         const response = await getAllUsers(authState.token);
         setUsers(response.data);
@@ -23,7 +18,7 @@ const AdminDashboard = () => {
     };
 
     fetchUsers();
-  }, [authState]);
+  }, [authState.token]);
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-4 shadow-md">

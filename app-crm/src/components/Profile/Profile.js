@@ -15,11 +15,6 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      if (!authState || !authState.token) {
-        console.error('User is not authenticated');
-        return;
-      }
-
       try {
         const response = await getUserById(authState.user.id, authState.token);
         setUser(response.data);
