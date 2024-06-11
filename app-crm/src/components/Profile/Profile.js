@@ -5,7 +5,7 @@ import UpdatePassword from './modals/UpdatePassword';
 import UpdateUsername from './modals/UpdateUsername';
 import UpdateEmail from './modals/UpdateEmail';
 import { FaEdit } from 'react-icons/fa';
-import { getUserById } from '../../services/userService';
+import { getUserById } from '../../services/user/userService';
 
 const Profile = () => {
   const { authState } = useContext(AuthContext);

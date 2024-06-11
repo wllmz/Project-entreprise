@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
-import { changeUserRole } from '../../../services/adminService';
+import { changeUserRole } from '../../../services/admin/adminService';
 
 const ChangeUserRole = ({ user, onClose }) => {
   const { authState } = useContext(AuthContext);
