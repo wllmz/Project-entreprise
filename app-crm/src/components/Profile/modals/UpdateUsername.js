@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
-import { updateUsername } from '../../../services/userService';
+import { updateUsername } from '../../../services/user/userService';
 
 const UpdateUsername = ({ closeModal }) => {
   const { authState } = useContext(AuthContext);

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
-import { deleteUser } from '../../../services/adminService';
+import { deleteUser } from '../../../services/admin/adminService';
 
 const DeleteUser = ({ user, onClose }) => {
   const { authState } = useContext(AuthContext);

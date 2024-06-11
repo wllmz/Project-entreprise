@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { getAllUsers } from '../../services/adminService';
+import { getAllUsers } from '../../services/admin/adminService';
 import UserList from './UserList';
 
 const AdminDashboard = () => {

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
-import { updateEmail } from '../../../services/userService';
+import { updateEmail } from '../../../services/user/userService';
 
 const UpdateEmail = ({ closeModal }) => {
   const { authState } = useContext(AuthContext);
