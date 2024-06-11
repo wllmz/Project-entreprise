@@ -6,6 +6,7 @@ const app = express();
 const authRoutes = require('./routes/Auth/authRoutes');
 const userRoutes = require('./routes/User/userRoutes');
 const adminRoutes = require('./routes/Admin/adminRoutes');
+const moduleRoutes = require('./routes/Modules/moduleRoutes');
 
 // Fonction pour démarrer le serveur
 async function startServer() {
@@ -21,10 +22,11 @@ async function startServer() {
             origin: ['http://localhost:3000']
           }));
           
-        // Utilisation des routes d'authentification avec un préfixe /auth
+        // Utilisation des routes avec un préfixe 
         app.use('/auth', authRoutes);
         app.use('/user', userRoutes);
         app.use('/admin', adminRoutes);
+        app.use('/modules', moduleRoutes);
 
         const PORT = process.env.PORT || 5000;
         app.listen(PORT, () => {
