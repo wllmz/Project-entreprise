@@ -3,6 +3,7 @@ import AdminDashboard from '../components/Admin/AdminDashboard';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
+
 const AdminPage = () => {
   const navigate = useNavigate();
   const { isAdmin } = useContext(AuthContext);
@@ -17,6 +18,7 @@ const AdminPage = () => {
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow">
         <AdminDashboard />
+  
       </main>
     </div>
   );

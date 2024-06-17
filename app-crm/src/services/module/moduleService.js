@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/modules'; // Assurez-vous que ce chemin correspond à celui de votre serveur
+const API_URL = 'http://localhost:5000/api/modules'; 
 
 export const listAllModules = async (token) => {
   return await axios.get(`${API_URL}/`, {
