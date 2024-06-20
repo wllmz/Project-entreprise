@@ -8,6 +8,7 @@ const userRoutes = require('./routes/User/userRoutes');
 const adminRoutes = require('./routes/Admin/adminRoutes');
 const moduleRoutes = require('./routes/Modules/moduleRoutes');
 const subjectRoutes = require('./routes/Subject/subjectRoutes'); 
+const commentRoutes = require('./routes/Comments/commentRoutes');
 
 // Fonction pour démarrer le serveur
 async function startServer() {
@@ -29,6 +30,8 @@ async function startServer() {
         app.use('/admin', adminRoutes);
         app.use('/modules', moduleRoutes);
         app.use('/subjects', subjectRoutes);
+        app.use('/comments', commentRoutes);
+        
 
         const PORT = process.env.PORT || 5000;
         app.listen(PORT, () => {
