@@ -1,5 +1,6 @@
 const Subject = require("../../models/Subjects/subjectModel");
 const Module = require("../../models/Modules/moduleModel");
+const Comment = require("../../models/Comments/commentModel");
 
 exports.listAllSubjects = async (req, res) => {
     try {
@@ -75,11 +76,15 @@ exports.getSubjectById = async (req, res) => {
         const subject = await Subject.findById(req.params.subjectId)
             .populate('module')
             .populate('author', 'username');
+        
         if (!subject) {
-            res.status(404).json({ message: "Sujet non trouvé" });
-        } else {
-            res.status(200).json(subject);
+            return res.status(404).json({ message: "Sujet non trouvé" });
         }
+
+        const comments = await Comment.find({ subject: subject._id })
+            .populate('author', 'username');
+
+        res.status(200).json({ ...subject._doc, comments });
     } catch (error) {
         res.status(500).json({ message: "Erreur serveur." });
         console.error(error);
