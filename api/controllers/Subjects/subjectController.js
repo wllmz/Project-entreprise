@@ -3,26 +3,30 @@ const Module = require("../../models/Modules/moduleModel");
 
 exports.listAllSubjects = async (req, res) => {
     try {
-        const subjects = await Subject.find({}).populate('module');
+        const subjects = await Subject.find({})
+            .populate('module')
+            .populate('author', 'username email');
         res.status(200).json(subjects);
     } catch (error) {
         res.status(500).json({ message: "Erreur serveur." });
-        console.error(error); 
+        console.error(error);
     }
 };
 
 exports.createSubject = async (req, res) => {
     try {
         const moduleId = req.params.moduleId;
-        const module = await Module.findById(moduleId);
+        const userId = req.user.id; 
 
+        const module = await Module.findById(moduleId);
         if (!module) {
             return res.status(404).json({ message: "Module non trouvé" });
         }
 
         const newSubject = new Subject({
             ...req.body,
-            module: moduleId
+            module: moduleId,
+            author: userId
         });
 
         const subject = await newSubject.save();
@@ -68,7 +72,9 @@ exports.updateSubject = async (req, res) => {
 
 exports.getSubjectById = async (req, res) => {
     try {
-        const subject = await Subject.findById(req.params.subjectId).populate('module');
+        const subject = await Subject.findById(req.params.subjectId)
+            .populate('module')
+            .populate('author', 'username');
         if (!subject) {
             res.status(404).json({ message: "Sujet non trouvé" });
         } else {

@@ -4,7 +4,6 @@ const subjectSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
-    unique: true,
   },
   description: {
     type: String,
@@ -13,6 +12,11 @@ const subjectSchema = new mongoose.Schema({
   module: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Modules",
+    required: true,
+  },
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
   created_at: {

@@ -61,7 +61,8 @@ exports.getModuleById = async (req, res) => {
         if (!module) {
             res.status(404).json({ message: "Module non trouvé" });
         } else {
-            const subjects = await Subject.find({ module: module._id });
+            const subjects = await Subject.find({ module: module._id })
+                .populate('author', 'username'); 
             res.status(200).json({ ...module._doc, subjects });
         }
     } catch (error) {
