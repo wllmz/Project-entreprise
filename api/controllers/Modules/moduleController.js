@@ -1,4 +1,5 @@
 const Module = require("../../models/Modules/moduleModel");
+const Subject = require("../../models/Subjects/subjectModel.js");
 
 exports.listAllModules = async (req, res) => {
     try {
@@ -60,7 +61,8 @@ exports.getModuleById = async (req, res) => {
         if (!module) {
             res.status(404).json({ message: "Module non trouvé" });
         } else {
-            res.status(200).json(module);
+            const subjects = await Subject.find({ module: module._id });
+            res.status(200).json({ ...module._doc, subjects });
         }
     } catch (error) {
         res.status(500).json({ message: "Erreur serveur." });
