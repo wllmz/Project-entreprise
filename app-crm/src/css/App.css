@@ -1,2 +1,6 @@
 @import './sidebar.css';
 @import './Header.css';
+
+body {
+    background-color: #d2e0fd;
+}

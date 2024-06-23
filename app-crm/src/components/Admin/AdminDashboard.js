@@ -21,8 +21,8 @@ const AdminDashboard = () => {
   }, [authState.token]);
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-4 shadow-md">
-      <h2 className="text-2xl mb-4">Tableau de bord de l'administrateur</h2>
+    <div className="max-w-4xl mx-auto mt-10 p-4 shadow-md bg-white rounded-lg">
+      <h2 className="text-2xl mb-4 underline">Tableau de bord de l'administrateur</h2>
       <UserList users={users} />
     </div>
   );

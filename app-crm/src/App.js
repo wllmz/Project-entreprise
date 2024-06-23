@@ -9,6 +9,7 @@ import AdminPage from './pages/AdminPage';
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
 import Sidebar from './components/Layout/Sidebar';
+import ModulePage from './pages/ModulePage';
 import ProtectedRoute from './context/ProtectedRoute';
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
               <Route path="/admin" element={<ProtectedRoute element={<AdminPage />} adminOnly={true} />} />
+              <Route path="/modules" element={<ProtectedRoute element={<ModulePage />} adminOnly={true} />} />
             </Routes>
           </main>
           <Footer />

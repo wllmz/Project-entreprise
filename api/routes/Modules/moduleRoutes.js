@@ -5,7 +5,7 @@ const jwtMiddleware = require('../../middleware/jwtMiddleware');
 const authMiddleware = require('../../middleware/authMiddleware');
 
 // Lister tous les modules
-router.get('/', jwtMiddleware.verifyToken, moduleController.listAllModules);
+router.get('/', moduleController.listAllModules);
 
 // Créer un nouveau module
 router.post('/', jwtMiddleware.verifyToken , authMiddleware.AdminRole, moduleController.createModule);

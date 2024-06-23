@@ -18,41 +18,45 @@ const UserList = ({ users }) => {
   };
 
   return (
-    <div>
-      <h3 className="text-xl mb-4">Liste des utilisateurs</h3>
-      <table className="min-w-full bg-white">
-        <thead>
-          <tr>
-            <th className="py-2">Nom d'utilisateur</th>
-            <th className="py-2">Email</th>
-            <th className="py-2">Rôle</th>
-            <th className="py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user._id}>
-              <td className="py-2">{user.username}</td>
-              <td className="py-2">{user.email}</td>
-              <td className="py-2">{user.role}</td>
-              <td className="py-2 flex space-x-2">
-                <button
-                  onClick={() => handleOpenModal(user, 'changeRole')}
-                  className="bg-blue-500 text-white p-2 rounded"
-                >
-                  Changer le rôle
-                </button>
-                <button
-                  onClick={() => handleOpenModal(user, 'deleteUser')}
-                  className="bg-red-500 text-white p-2 rounded"
-                >
-                  Supprimer
-                </button>
-              </td>
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <h3 className="text-xl mb-4 bg-white">Liste des utilisateurs :</h3>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200">
+          <thead>
+            <tr>
+              <th className="py-2 px-4 border-b">Nom d'utilisateur</th>
+              <th className="py-2 px-4 border-b">Email</th>
+              <th className="py-2 px-4 border-b">Rôle</th>
+              <th className="py-2 px-4 border-b">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user._id} className="border-b">
+                <td className="py-2 px-4">{user.username}</td>
+                <td className="py-2 px-4">{user.email}</td>
+                <td className="py-2 px-4">{user.role}</td>
+                <td className="py-2 px-4">
+                  <div className="flex flex-col sm:flex-row sm:space-x-2">
+                    <button
+                      onClick={() => handleOpenModal(user, 'changeRole')}
+                      className="bg-blue-500 text-white p-2 rounded mb-2 sm:mb-0"
+                    >
+                      Changer le rôle
+                    </button>
+                    <button
+                      onClick={() => handleOpenModal(user, 'deleteUser')}
+                      className="bg-red-500 text-white p-2 rounded"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {selectedUser && modalType === 'changeRole' && (
         <ModalWrapper isOpen={true} onClose={handleCloseModal}>

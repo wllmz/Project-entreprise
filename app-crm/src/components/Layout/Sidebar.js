@@ -17,7 +17,7 @@ const Sidebar = () => {
 
   return (
     <div className="flex">
-      <div className={`fixed inset-y-0 left-0 bg-green-500 text-white p-4 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 w-64`}>
+      <div className={`fixed inset-y-0 left-0 bg-gray-800 text-white p-4 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 w-64`}>
         <button onClick={toggleSidebar} className="text-2xl mb-4">
           <FaTimes />
         </button>
@@ -25,6 +25,11 @@ const Sidebar = () => {
         <nav className="flex flex-col space-y-4">
           <Link to="/admin" className="hover:bg-gray-700 p-2 rounded flex items-center">
             <FaUser className="mr-2" /> Users
+          </Link>
+        </nav>
+        <nav className="flex flex-col space-y-4">
+          <Link to="/modules" className="hover:bg-gray-700 p-2 rounded flex items-center">
+            <FaUser className="mr-2" /> module
           </Link>
         </nav>
       </div>
