@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../../context/AuthContext';
+import logo from '../../assets/logo.png'; 
 
 const Header = () => {
   const { logout, isAuthenticated } = useContext(AuthContext);
@@ -13,11 +14,11 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gray-800 text-white p-4">
+    <header className="text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-xl font-bold">
-          <Link to="/">Mon Application</Link>
-        </h1>
+        <Link to="/">
+          <img src={logo} alt="Logo" className="h-16" /> 
+        </Link>
         <nav className="flex space-x-4 items-center">
           {isAuthenticated() ? (
             <div className="relative">

@@ -5,3 +5,15 @@ header.bg-gray-800.text-white.p-4 {
 footer.bg-gray-800.text-white.p-4.text-center {
     z-index: 1;
 }
+
+header.text-white.p-4 {
+    background-color: #D2E0FD;
+    z-index: 2;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    width: 100%;
+}
+
+svg.svg-inline--fa.fa-user.cursor-pointer {
+    color: #333;
+    height: 25px;
+}
