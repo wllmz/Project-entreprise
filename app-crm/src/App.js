@@ -10,6 +10,8 @@ import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
 import Sidebar from './components/Layout/Sidebar';
 import ModulePage from './pages/ModulePage';
+import ModuleDetail from './components/Modules/ModuleDetail';
+import SubjectDetailPage from './components/subject/SubjectDetailPage';
 import ProtectedRoute from './context/ProtectedRoute';
 
 const App = () => {
@@ -27,6 +29,8 @@ const App = () => {
               <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
               <Route path="/admin" element={<ProtectedRoute element={<AdminPage />} adminOnly={true} />} />
               <Route path="/modules" element={<ProtectedRoute element={<ModulePage />} adminOnly={true} />} />
+              <Route path="/modules/:moduleId" element={<ProtectedRoute element={<ModuleDetail />} />} />
+              <Route path="/subjects/:subjectId" element={<SubjectDetailPage />} />
             </Routes>
           </main>
           <Footer />

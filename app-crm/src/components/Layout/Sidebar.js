@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaBars, FaTimes, FaUser } from 'react-icons/fa';
+import { FaBars, FaTimes, FaUser, FaBook } from 'react-icons/fa';
 import { AuthContext } from '../../context/AuthContext';
 
 const Sidebar = () => {
@@ -26,10 +26,8 @@ const Sidebar = () => {
           <Link to="/admin" className="hover:bg-gray-700 p-2 rounded flex items-center">
             <FaUser className="mr-2" /> Users
           </Link>
-        </nav>
-        <nav className="flex flex-col space-y-4">
           <Link to="/modules" className="hover:bg-gray-700 p-2 rounded flex items-center">
-            <FaUser className="mr-2" /> module
+            <FaBook className="mr-2" /> Modules
           </Link>
         </nav>
       </div>

@@ -18,7 +18,6 @@ const ModuleList = () => {
 
   const fetchModules = async () => {
     try {
-      console.log('Fetching modules with token:', authState.token); // Log du jeton
       const data = await getModules(authState.token);
       setModules(data);
     } catch (error) {
@@ -36,9 +35,34 @@ const ModuleList = () => {
     setModalType('');
   };
 
+  const renderModals = () => {
+    switch (modalType) {
+      case 'add':
+        return (
+          <ModalWrapper isOpen={true} onClose={handleCloseModal}>
+            <AddModule onClose={handleCloseModal} />
+          </ModalWrapper>
+        );
+      case 'update':
+        return (
+          <ModalWrapper isOpen={true} onClose={handleCloseModal}>
+            <UpdateModule module={selectedModule} onClose={handleCloseModal} />
+          </ModalWrapper>
+        );
+      case 'delete':
+        return (
+          <ModalWrapper isOpen={true} onClose={handleCloseModal}>
+            <DeleteModule module={selectedModule} onClose={handleCloseModal} />
+          </ModalWrapper>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-      <h3 className="text-xl mb-4 bg-white">Liste des modules :</h3>
+    <div className="max-w-4xl mx-auto mt-10 p-4 shadow-md bg-white rounded-lg">
+      <h2 className="text-2xl mb-4 underline">Liste des modules</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
@@ -52,10 +76,10 @@ const ModuleList = () => {
               <tr key={module._id} className="border-b">
                 <td className="py-2 px-4">{module.module}</td>
                 <td className="py-2 px-4">
-                  <div className="flex flex-col sm:flex-row sm:space-x-2">
+                  <div className="flex space-x-2">
                     <button
                       onClick={() => handleOpenModal(module, 'update')}
-                      className="bg-blue-500 text-white p-2 rounded mb-2 sm:mb-0"
+                      className="bg-blue-500 text-white p-2 rounded"
                     >
                       Modifier
                     </button>
@@ -72,31 +96,13 @@ const ModuleList = () => {
           </tbody>
         </table>
       </div>
-
-      {selectedModule && modalType === 'update' && (
-        <ModalWrapper isOpen={true} onClose={handleCloseModal}>
-          <UpdateModule module={selectedModule} onClose={handleCloseModal} />
-        </ModalWrapper>
-      )}
-
-      {selectedModule && modalType === 'delete' && (
-        <ModalWrapper isOpen={true} onClose={handleCloseModal}>
-          <DeleteModule module={selectedModule} onClose={handleCloseModal} />
-        </ModalWrapper>
-      )}
-
       <button
         onClick={() => handleOpenModal(null, 'add')}
         className="bg-green-500 text-white p-2 rounded mt-4"
       >
         Ajouter un Module
       </button>
-
-      {modalType === 'add' && (
-        <ModalWrapper isOpen={true} onClose={handleCloseModal}>
-          <AddModule onClose={handleCloseModal} />
-        </ModalWrapper>
-      )}
+      {renderModals()}
     </div>
   );
 };

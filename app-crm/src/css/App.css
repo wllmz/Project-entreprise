@@ -4,3 +4,11 @@
 body {
     background-color: #d2e0fd;
 }
+
+a.hover\:underline {
+    color: #333;
+}
+
+div#home {
+    margin-top: 150px;
+}
