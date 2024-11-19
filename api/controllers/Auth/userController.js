@@ -1,4 +1,4 @@
-import Auth from "../../models/Auth/userModel.js";
+import User from "../../models/Auth/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -80,7 +80,7 @@ export const loginUser = async (req, res) => {
     const { login, password } = req.body; // 'login' peut être un email ou un username
 
     // Recherche d'utilisateur par email ou username
-    const user = await Auth.findOne({
+    const user = await User.findOne({
       $or: [{ email: login }, { username: login }],
     });
 
@@ -181,5 +181,51 @@ export const logoutUser = (req, res) => {
   } catch (error) {
     console.error("Erreur lors de la déconnexion :", error.message);
     res.status(500).json({ message: "Erreur lors de la déconnexion" });
+  }
+};
+
+// 5. Route pour vérifier l'email
+export const verifyEmail = async (req, res) => {
+  const { email } = req.query;
+
+  // Validation de l'email
+  if (!email) {
+    return res.status(400).json({ message: "Email est requis." });
+  }
+
+  console.log("Email reçu pour vérification:", email); // Log de l'email reçu
+
+  try {
+    // Rechercher l'utilisateur par email
+    const user = await User.findOne({ email });
+    console.log("Utilisateur trouvé:", user); // Log de l'utilisateur trouvé
+
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur non trouvé." });
+    }
+
+    // Vérifiez si l'email a déjà été vérifié
+    if (user.verifyEmail) {
+      return res.status(400).json({ message: "L'email a déjà été vérifié." });
+    }
+
+    // Mettre à jour le champ verifyEmail à true
+    user.verifyEmail = true;
+    await user.save();
+
+    const accessToken = jwt.sign(
+      { id: user._id, roles: user.roles },
+      JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    res
+      .status(200)
+      .json({ message: "Email vérifié avec succès !", accessToken });
+  } catch (error) {
+    console.error("Erreur lors de la vérification de l'email :", error.message);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la vérification de l'email" });
   }
 };

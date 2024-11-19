@@ -49,12 +49,12 @@ async function startServer() {
     );
 
     // Utilisation des routes avec un préfixe
-    app.use("/auth", authRoutes);
-    app.use("/user", userRoutes);
-    app.use("/admin", adminRoutes);
-    app.use("/modules", moduleRoutes);
-    app.use("/subjects", subjectRoutes);
-    app.use("/comments", commentRoutes);
+    app.use("/api/auth", authRoutes);
+    app.use("/api/user", userRoutes);
+    app.use("/api/admin", adminRoutes);
+    app.use("/api/modules", moduleRoutes);
+    app.use("/api/subjects", subjectRoutes);
+    app.use("/api/comments", commentRoutes);
 
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
