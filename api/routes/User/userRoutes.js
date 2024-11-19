@@ -1,19 +1,24 @@
-const express = require('express');
-const router = express.Router();
-const userUpdateController = require('../../controllers/User/userController');
-const jwtMiddleware = require('../../middleware/jwtMiddleware');
+import express from "express";
+import {
+  changePassword,
+  changeUsername,
+  updateEmail,
+  getUserById,
+} from "../../controllers/User/userController.js";
+import { verifyToken } from "../../middleware/jwtMiddleware.js";
 
+const router = express.Router();
 
 // Mettre à jour le mot de passe
-router.put('/mdp-update/:id',  jwtMiddleware.verifyToken, userUpdateController.changePassword);
+router.put("/mdp-update/:id", verifyToken, changePassword);
 
 // Mettre à jour le nom d'utilisateur
-router.put('/username-update/:id',  jwtMiddleware.verifyToken, userUpdateController.changeUsername);
+router.put("/username-update/:id", verifyToken, changeUsername);
 
 // Mettre à jour l'email
-router.put('/email-update/:id', jwtMiddleware.verifyToken, userUpdateController.updateEmail);
+router.put("/email-update/:id", verifyToken, updateEmail);
 
-// information profil 
-router.get('/:id', jwtMiddleware.verifyToken, userUpdateController.getUserById);
+// Récupérer les informations de profil
+router.get("/:id", verifyToken, getUserById);
 
-module.exports = router;
+export default router;

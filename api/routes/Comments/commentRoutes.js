@@ -1,16 +1,20 @@
-const express = require('express');
+import express from "express";
+import {
+  createComment,
+  deleteComment,
+  updateComment,
+} from "../../controllers/Comments/commentController.js";
+import { verifyToken } from "../../middleware/jwtMiddleware.js";
+
 const router = express.Router();
-const commentController = require('../../controllers/Comments/commentController');
-const jwtMiddleware = require('../../middleware/jwtMiddleware');
 
 // Créer un nouveau commentaire pour un sujet spécifique
-router.post('/:subjectId', jwtMiddleware.verifyToken, commentController.createComment);
+router.post("/:subjectId", verifyToken, createComment);
 
 // Supprimer un commentaire par ID
-router.delete('/:commentId', jwtMiddleware.verifyToken, commentController.deleteComment);
+router.delete("/:commentId", verifyToken, deleteComment);
 
 // Mettre à jour un commentaire par ID
-router.put('/:commentId', jwtMiddleware.verifyToken, commentController.updateComment);
+router.put("/:commentId", verifyToken, updateComment);
 
-
-module.exports = router;
+export default router;

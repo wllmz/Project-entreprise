@@ -1,17 +1,24 @@
-const express = require('express');
-const router = express.Router();
-const userController = require('../../controllers/Auth/userController');
-const jwtMiddleware = require('../../middleware/jwtMiddleware');
+import express from "express";
+import {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshToken,
+} from "../../controllers/Auth/userController.js";
+import { verifyToken } from "../../middleware/jwtMiddleware.js";
 
+const router = express.Router();
 
 // Inscription
-router.post('/register', userController.register);
+router.post("/register", registerUser);
 
 // Connexion
-router.post('/login', userController.userLogin);
+router.post("/login", loginUser);
 
 // Déconnexion
-router.post('/logout', jwtMiddleware.verifyToken, userController.logout);
+router.post("/logout", verifyToken, logoutUser);
 
+// Route pour rafraîchir le Access Token
+router.post("/refresh-token", refreshToken);
 
-module.exports = router;
+export default router;

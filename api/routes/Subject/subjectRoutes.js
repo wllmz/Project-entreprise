@@ -1,22 +1,29 @@
-const express = require('express');
+import express from "express";
+import {
+  listAllSubjects,
+  createSubject,
+  deleteSubject,
+  updateSubject,
+  getSubjectById,
+} from "../../controllers/Subjects/subjectController.js";
+import { verifyToken } from "../../middleware/jwtMiddleware.js";
+import { AdminRole } from "../../middleware/authMiddleware.js";
+
 const router = express.Router();
-const subjectController = require('../../controllers/Subjects/subjectController');
-const jwtMiddleware = require('../../middleware/jwtMiddleware');
-const authMiddleware = require('../../middleware/authMiddleware');
 
 // Lister tous les sujets
-router.get('/', jwtMiddleware.verifyToken, authMiddleware.AdminRole, subjectController.listAllSubjects);
+router.get("/", verifyToken, AdminRole, listAllSubjects);
 
 // Créer un nouveau sujet pour un module spécifique
-router.post('/:moduleId', jwtMiddleware.verifyToken, subjectController.createSubject);
+router.post("/:moduleId", verifyToken, createSubject);
 
 // Supprimer un sujet par ID
-router.delete('/:subjectId', jwtMiddleware.verifyToken, subjectController.deleteSubject);
+router.delete("/:subjectId", verifyToken, deleteSubject);
 
 // Mettre à jour un sujet par ID
-router.put('/:subjectId', jwtMiddleware.verifyToken, authMiddleware.AdminRole, subjectController.updateSubject);
+router.put("/:subjectId", verifyToken, AdminRole, updateSubject);
 
 // Obtenir un sujet par ID
-router.get('/:subjectId', jwtMiddleware.verifyToken, subjectController.getSubjectById);
+router.get("/:subjectId", verifyToken, getSubjectById);
 
-module.exports = router;
+export default router;
