@@ -1,54 +1,26 @@
-import axios from 'axios';
+import API from "../axiosInstance"; // Utilisation de l'instance Axios partagée
 
-const API_URL = 'http://localhost:5000/modules';
-
-export const getModules = async (token) => {
-  console.log('Token used for fetching modules:', token);
-  const response = await axios.get(API_URL, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-  console.log('Response data from API:', response.data);
+export const getModules = async () => {
+  const response = await API.get("/modules");
   return response.data;
 };
 
-export const getModuleById = async (moduleId, token) => {
-  console.log('Token used for fetching module by ID:', token);
-  const response = await axios.get(`${API_URL}/${moduleId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const getModuleById = async (moduleId) => {
+  const response = await API.get(`/modules/${moduleId}`);
   return response.data;
 };
 
-export const createModule = async (moduleData, token) => {
-  console.log('Token used for creating module:', token);
-  const response = await axios.post(API_URL, moduleData, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const createModule = async (moduleData) => {
+  const response = await API.post("/modules", moduleData);
   return response.data;
 };
 
-export const updateModule = async (moduleId, moduleData, token) => {
-  console.log('Token used for updating module:', token);
-  const response = await axios.put(`${API_URL}/${moduleId}`, moduleData, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const updateModule = async (moduleId, moduleData) => {
+  const response = await API.put(`/modules/${moduleId}`, moduleData);
   return response.data;
 };
 
-export const deleteModule = async (moduleId, token) => {
-  console.log('Token used for deleting module:', token);
-  const response = await axios.delete(`${API_URL}/${moduleId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const deleteModule = async (moduleId) => {
+  const response = await API.delete(`/modules/${moduleId}`);
   return response.data;
 };

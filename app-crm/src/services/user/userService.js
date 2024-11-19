@@ -1,49 +1,35 @@
-import axios from 'axios';
+import API from "../axiosInstance";
 
-const API_URL = 'http://localhost:5000/user';
+export const getCurrentUser = async () => {
+  const response = await API.get("/user/me"); // Utilise le cookie pour authentification
+  return response.data; // Retourne les données utilisateur
+};
 
-const getUserById = async (id, token) => {
-  return await axios.get(`${API_URL}/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+export const changePassword = async (
+  oldPassword,
+  newPassword,
+  confirmPassword
+) => {
+  const response = await API.put("/user/password", {
+    oldPassword,
+    newPassword,
+    confirmPassword,
   });
+  return response.data; // Retourne un message de succès ou d'erreur
 };
 
-const updatePassword = async (id, oldPassword, newPassword, confirmPassword, token) => {
-  return await axios.put(
-    `${API_URL}/mdp-update/${id}`,
-    { oldPassword, newPassword, confirmPassword },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
-  );
+export const changeUsername = async (password, newUsername) => {
+  const response = await API.put("/user/username", {
+    password,
+    newUsername,
+  });
+  return response.data; // Retourne un message de succès ou d'erreur
 };
 
-const updateUsername = async (id, password, newUsername, token) => {
-  return await axios.put(
-    `${API_URL}/username-update/${id}`,
-    { password, newUsername },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
-  );
+export const updateEmail = async (password, newEmail) => {
+  const response = await API.put("/user/email", {
+    password,
+    newEmail,
+  });
+  return response.data; // Retourne un message de succès ou d'erreur
 };
-
-const updateEmail = async (id, password, newEmail, token) => {
-  return await axios.put(
-    `${API_URL}/email-update/${id}`,
-    { password, newEmail },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
-  );
-};
-
-export { getUserById, updatePassword, updateUsername, updateEmail };

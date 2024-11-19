@@ -2,9 +2,9 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
-import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import { connectMongoDb } from "./db/MongodbConnect.js";
+// import rateLimit from "express-rate-limit";
 
 // Importation des routeurs
 import authRoutes from "./routes/Auth/authRoutes.js";
@@ -18,12 +18,12 @@ import commentRoutes from "./routes/Comments/commentRoutes.js";
 const app = express();
 
 // Configuration du middleware de limitation des requêtes globales
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limite à 100 requêtes par IP
-  message:
-    "Trop de requêtes effectuées depuis cette IP. Veuillez réessayer plus tard.",
-});
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // Limite à 100 requêtes par IP
+//   message:
+//     "Trop de requêtes effectuées depuis cette IP. Veuillez réessayer plus tard.",
+// });
 
 // Fonction pour démarrer le serveur
 async function startServer() {
@@ -37,8 +37,8 @@ async function startServer() {
     // Middleware pour le logging des requêtes
     app.use(morgan("tiny"));
 
-    // Middleware de limitation des requêtes globales
-    app.use(limiter);
+    // // Middleware de limitation des requêtes globales
+    // app.use(limiter);
 
     // Middleware pour parser les cookies
     app.use(cookieParser());
