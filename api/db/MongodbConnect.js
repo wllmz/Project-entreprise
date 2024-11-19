@@ -3,18 +3,20 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-async function connectToMongoDB() {
+// Connexion à la base de données MongoDB
+export async function connectMongoDb() {
   try {
-    const mongoDBUri = process.env.MONGODB_URI;
-    await mongoose.connect(mongoDBUri, {
+    const mongoUri = process.env.MONGOURI;
+    if (!mongoUri) {
+      console.log("La variable d'environnement MONGOURI n'est pas définie.");
+      return; // Arrêter l'exécution si MONGOURI n'est pas défini
+    }
+    await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log("MongoDB connection successful");
-  } catch (err) {
-    console.error("MongoDB connection error:", err);
-    process.exit(1);
+    console.log("Connexion à MongoDB réussie.");
+  } catch (error) {
+    console.error(`Erreur de connexion à MongoDB : ${error.message}`);
   }
 }
-
-connectToMongoDB();
