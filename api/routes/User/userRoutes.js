@@ -1,24 +1,24 @@
 import express from "express";
+import { verifyToken } from "../../middleware/jwtMiddleware.js";
 import {
   changePassword,
   changeUsername,
   updateEmail,
-  getUserById,
+  getCurrentUser,
 } from "../../controllers/User/userController.js";
-import { verifyToken } from "../../middleware/jwtMiddleware.js";
 
 const router = express.Router();
 
-// Mettre à jour le mot de passe
-router.put("/mdp-update/:id", verifyToken, changePassword);
+// Récupérer l'utilisateur connecté
+router.get("/me", verifyToken, getCurrentUser);
 
-// Mettre à jour le nom d'utilisateur
-router.put("/username-update/:id", verifyToken, changeUsername);
+// Modifier le mot de passe
+router.put("/password", verifyToken, changePassword);
 
-// Mettre à jour l'email
-router.put("/email-update/:id", verifyToken, updateEmail);
+// Modifier le nom d'utilisateur
+router.put("/username", verifyToken, changeUsername);
 
-// Récupérer les informations de profil
-router.get("/:id", verifyToken, getUserById);
+// Modifier l'email
+router.put("/email", verifyToken, updateEmail);
 
 export default router;

@@ -1,48 +1,26 @@
-import axios from 'axios';
+import API from "../axiosInstance";
 
-const API_URL = 'http://localhost:5000/subjects';
-
-export const listAllSubjects = async (token) => {
-  const response = await axios.get(API_URL, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const listAllSubjects = async () => {
+  const response = await API.get("/subjects");
   return response.data;
 };
 
-export const createSubject = async (moduleId, subjectData, token) => {
-  const response = await axios.post(`${API_URL}/${moduleId}`, subjectData, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const createSubject = async (moduleId, subjectData) => {
+  const response = await API.post(`/subjects/${moduleId}`, subjectData);
   return response.data;
 };
 
-export const deleteSubject = async (subjectId, token) => {
-  const response = await axios.delete(`${API_URL}/${subjectId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const deleteSubject = async (subjectId) => {
+  const response = await API.delete(`/subjects/${subjectId}`);
   return response.data;
 };
 
-export const updateSubject = async (subjectId, subjectData, token) => {
-  const response = await axios.put(`${API_URL}/${subjectId}`, subjectData, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const updateSubject = async (subjectId, subjectData) => {
+  const response = await API.put(`/subjects/${subjectId}`, subjectData);
   return response.data;
 };
 
-export const getSubjectById = async (subjectId, token) => {
-  const response = await axios.get(`${API_URL}/${subjectId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const getSubjectById = async (subjectId) => {
+  const response = await API.get(`/subjects/${subjectId}`);
   return response.data;
 };

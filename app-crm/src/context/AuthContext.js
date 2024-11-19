@@ -1,54 +1,74 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {jwtDecode} from "jwt-decode";
-import { logout as authLogout } from '../services/auth/authService';
+import React, { createContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  getCurrentUser as fetchCurrentUser,
+  logout as apiLogout,
+} from "../services/auth/authService";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [authState, setAuthState] = useState(null);
-  const [loadingAuth, setLoadingAuth] = useState(true);
+  const [authState, setAuthState] = useState(null); // Stocke l'état utilisateur
+  const [loadingAuth, setLoadingAuth] = useState(true); // Charge initiale
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
+    const fetchUser = async () => {
       try {
-        const decoded = jwtDecode(token);
-        setAuthState({ token, user: decoded.user });
+        const user = await fetchCurrentUser(); // Appel à l'API pour récupérer l'utilisateur
+        setAuthState({ user });
       } catch (error) {
-        console.error('Error decoding auth token:', error);
+        console.error("Non authentifié ou session expirée :", error);
         setAuthState(null);
-        localStorage.removeItem('authToken');
-        navigate('/login'); 
+      } finally {
+        setLoadingAuth(false); // Fin de la charge initiale
       }
-    }
-    setLoadingAuth(false); 
-  }, [navigate]);
+    };
+    fetchUser();
+  }, []);
 
-  const login = (token) => {
-    const decoded = jwtDecode(token);
-    setAuthState({ token, user: decoded.user });
-    localStorage.setItem('authToken', token);
+  const login = async () => {
+    try {
+      const user = await fetchCurrentUser(); // Récupère les infos utilisateur après connexion
+      setAuthState({ user });
+      navigate("/"); // Redirige après connexion
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération de l'utilisateur après connexion :",
+        error
+      );
+    }
   };
 
-  const logout = () => {
-    setAuthState(null);
-    localStorage.removeItem('authToken');
-    authLogout();
-    navigate('/login');
+  const logout = async () => {
+    try {
+      await apiLogout(); // Déconnexion via l'API
+      setAuthState(null);
+      navigate("/login");
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion :", error);
+    }
   };
 
   const isAuthenticated = () => {
-    return authState && authState.user;
+    return !!authState?.user;
   };
 
   const isAdmin = () => {
-    return isAuthenticated() && authState.user.role === 'admin';
+    return isAuthenticated() && authState.user.role === "admin";
   };
 
   return (
-    <AuthContext.Provider value={{ authState, loadingAuth, login, logout, isAuthenticated, isAdmin }}>
+    <AuthContext.Provider
+      value={{
+        authState,
+        loadingAuth,
+        login,
+        logout,
+        isAuthenticated,
+        isAdmin,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

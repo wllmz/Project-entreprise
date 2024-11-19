@@ -11,7 +11,7 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
 // Utilitaires pour générer des tokens
 const generateAccessToken = (user) => {
-  return jwt.sign({ id: user._id, roles: user.roles }, JWT_SECRET, {
+  return jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
     expiresIn: "15m",
   });
 };
@@ -28,11 +28,9 @@ export const registerUser = async (req, res) => {
     const { username, email, password } = req.body;
 
     if (!email || !password || !username) {
-      return res
-        .status(400)
-        .json({
-          message: "Email, mot de passe et nom d'utilisateur sont requis.",
-        });
+      return res.status(400).json({
+        message: "Email, mot de passe et nom d'utilisateur sont requis.",
+      });
     }
 
     const existingUser = await User.findOne({ email });
@@ -67,11 +65,9 @@ export const registerUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Erreur lors de l'inscription :", error.message);
-    res
-      .status(500)
-      .json({
-        message: "Erreur serveur lors de la création de l'utilisateur.",
-      });
+    res.status(500).json({
+      message: "Erreur serveur lors de la création de l'utilisateur.",
+    });
   }
 };
 
@@ -92,11 +88,9 @@ export const loginUser = async (req, res) => {
 
     if (!user.verifyEmail) {
       await sendVerificationEmail(user.email);
-      return res
-        .status(403)
-        .json({
-          message: "Email non vérifié. Un email de vérification a été renvoyé.",
-        });
+      return res.status(403).json({
+        message: "Email non vérifié. Un email de vérification a été renvoyé.",
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -109,14 +103,23 @@ export const loginUser = async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      sameSite: "Strict",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+    // Stocke l'accessToken dans un cookie
+    res.cookie("accessToken", accessToken, {
+      httpOnly: false,
+      secure: false,
+      sameSite: "Lax",
+      maxAge: 15 * 60 * 1000, //
     });
 
-    res.status(200).json({ accessToken });
+    // Stocke le refreshToken dans un cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({ message: "Connexion réussie." });
   } catch (error) {
     console.error("Erreur lors de la connexion :", error.message);
     res.status(500).json({ message: "Erreur serveur lors de la connexion." });
@@ -141,15 +144,28 @@ export const refreshToken = (req, res) => {
     }
 
     const newAccessToken = generateAccessToken(decoded);
-    res.status(200).json({ accessToken: newAccessToken });
+
+    // Stocke le nouveau accessToken dans un cookie
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: false,
+      secure: false,
+      sameSite: "Lax",
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.status(200).json({ message: "Token rafraîchi avec succès." });
   });
 };
 
 // 4. Fonction pour la déconnexion d'un utilisateur
 export const logoutUser = (req, res) => {
   try {
+    res.clearCookie("accessToken", {
+      httpOnly: false, // Désactivé pour les tests dans Postman
+      sameSite: "Lax",
+    });
     res.clearCookie("refreshToken", {
-      httpOnly: true,
+      httpOnly: true, // Toujours protégé
       sameSite: "Strict",
     });
     res.status(200).json({ message: "Déconnexion réussie." });
