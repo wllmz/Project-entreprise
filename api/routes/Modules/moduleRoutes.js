@@ -1,22 +1,29 @@
-const express = require('express');
+import express from "express";
+import {
+  listAllModules,
+  createModule,
+  deleteModule,
+  updateModule,
+  getModuleById,
+} from "../../controllers/Modules/moduleController.js";
+import { verifyToken } from "../../middleware/jwtMiddleware.js";
+import { AdminRole } from "../../middleware/authMiddleware.js";
+
 const router = express.Router();
-const moduleController = require('../../controllers/Modules/moduleController');
-const jwtMiddleware = require('../../middleware/jwtMiddleware');
-const authMiddleware = require('../../middleware/authMiddleware');
 
 // Lister tous les modules
-router.get('/', moduleController.listAllModules);
+router.get("/", listAllModules);
 
 // Créer un nouveau module
-router.post('/', jwtMiddleware.verifyToken , authMiddleware.AdminRole, moduleController.createModule);
+router.post("/", verifyToken, AdminRole, createModule);
 
 // Supprimer un module par ID
-router.delete('/:moduleId', jwtMiddleware.verifyToken , authMiddleware.AdminRole, moduleController.deleteModule);
+router.delete("/:moduleId", verifyToken, AdminRole, deleteModule);
 
 // Mettre à jour un module par ID
-router.put('/:moduleId', jwtMiddleware.verifyToken , authMiddleware.AdminRole, moduleController.updateModule);
+router.put("/:moduleId", verifyToken, AdminRole, updateModule);
 
 // Obtenir un module par ID
-router.get('/:moduleId', jwtMiddleware.verifyToken, moduleController.getModuleById);
+router.get("/:moduleId", verifyToken, getModuleById);
 
-module.exports = router;
+export default router;
