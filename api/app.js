@@ -3,6 +3,8 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import cookieParser from "cookie-parser";
+import { connectMongoDb } from "./db/MongodbConnect.js";
 
 // Importation des routeurs
 import authRoutes from "./routes/Auth/authRoutes.js";
@@ -15,7 +17,7 @@ import commentRoutes from "./routes/Comments/commentRoutes.js";
 // Initialisation de l'application Express
 const app = express();
 
-// Configuration du middleware de limitation des requêtes
+// Configuration du middleware de limitation des requêtes globales
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limite à 100 requêtes par IP
@@ -26,17 +28,20 @@ const limiter = rateLimit({
 // Fonction pour démarrer le serveur
 async function startServer() {
   try {
+    // Connexion à MongoDB
+    await connectMongoDb();
+
     // Middleware de sécurité pour les en-têtes HTTP
     app.use(helmet());
 
     // Middleware pour le logging des requêtes
     app.use(morgan("tiny"));
 
-    // Middleware de limitation des requêtes
+    // Middleware de limitation des requêtes globales
     app.use(limiter);
 
-    // Importe et initialise la connexion à MongoDB
-    await import("./db/MongodbConnect.js");
+    // Middleware pour parser les cookies
+    app.use(cookieParser());
 
     // Middleware pour le parsing JSON
     app.use(express.json());
@@ -44,11 +49,12 @@ async function startServer() {
     // Middleware pour gérer les requêtes CORS
     app.use(
       cors({
-        origin: ["http://localhost:3000"], // Remplacez ceci par votre domaine en production
+        origin: ["http://localhost:3000"],
+        credentials: true,
       })
     );
 
-    // Utilisation des routes avec un préfixe
+    // Routes
     app.use("/api/auth", authRoutes);
     app.use("/api/user", userRoutes);
     app.use("/api/admin", adminRoutes);
