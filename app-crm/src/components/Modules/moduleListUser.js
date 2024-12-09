@@ -1,25 +1,20 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
-import { getModules } from '../../services/module/moduleService';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getModules } from "../../services/module/moduleService";
 
 const ModuleListUser = () => {
   const [modules, setModules] = useState([]);
-  const { authState } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (authState.token) {
-      getModules(authState.token)
-        .then(setModules)
-        .catch(error => console.error('Failed to fetch modules', error));
-    }
-  }, [authState.token]);
+    getModules()
+      .then(setModules)
+      .catch((error) => console.error("Failed to fetch modules", error));
+  }, []);
 
   const handleViewDetail = (moduleId) => {
     navigate(`/modules/${moduleId}`);
   };
-
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-4 shadow-md bg-white rounded-lg">

@@ -1,20 +1,18 @@
-import React, { useState, useContext } from 'react';
-import { AuthContext } from '../../../context/AuthContext';
-import { createModule } from '../../../services/module/moduleService';
+import React, { useState } from "react";
+import { createModule } from "../../../services/module/moduleService";
 
 const AddModule = ({ onClose }) => {
-  const [moduleName, setModuleName] = useState('');
-  const { authState } = useContext(AuthContext);
+  const [moduleName, setModuleName] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createModule({ module: moduleName }, authState.token);
-      setModuleName('');
+      await createModule({ module: moduleName });
+      setModuleName("");
       onClose();
-      window.location.reload(); // Refresh the page to reflect changes
+      window.location.reload();
     } catch (error) {
-      console.error('Failed to create module', error);
+      console.error("Failed to create module", error);
     }
   };
 
@@ -30,7 +28,10 @@ const AddModule = ({ onClose }) => {
           className="border p-2 rounded mb-4 w-full"
           required
         />
-        <button type="submit" className="bg-green-500 text-white p-2 rounded w-full">
+        <button
+          type="submit"
+          className="bg-green-500 text-white p-2 rounded w-full"
+        >
           Ajouter
         </button>
       </form>

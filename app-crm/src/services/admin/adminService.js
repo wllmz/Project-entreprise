@@ -1,12 +1,12 @@
-import API from "../axiosInstance"; // Import de l'instance Axios configurée
+import axiosInstance from "../axiosInstance"; // Import de l'instance Axios configurée
 
 export const getAllUsers = async () => {
-  const response = await API.get("/admin/allusers");
+  const response = await axiosInstance.get("/admin/allusers");
   return response.data;
 };
 
 export const changeUserRole = async (id, newRole, adminPassword) => {
-  const response = await API.post(`/admin/change-role/${id}`, {
+  const response = await axiosInstance.post(`/admin/change-role/${id}`, {
     newRole,
     adminPassword,
   });
@@ -14,7 +14,7 @@ export const changeUserRole = async (id, newRole, adminPassword) => {
 };
 
 export const deleteUser = async (id, adminPassword) => {
-  const response = await API.delete(`/admin/deleteuser/${id}`, {
+  const response = await axiosInstance.delete(`/admin/deleteuser/${id}`, {
     data: { adminPassword },
   });
   return response.data;

@@ -1,48 +1,57 @@
-import React, { useState, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
-import { createComment, deleteComment, updateComment } from '../../services/comment/commentService';
-import DeleteCommentModal from './modals/DeleteCommentModal';
-import UpdateCommentModal from './modals/UpdateCommentModal';
-import { FaTrashAlt, FaEdit } from 'react-icons/fa';
+import React, { useState } from "react";
+import {
+  createComment,
+  deleteComment,
+  updateComment,
+} from "../../services/comment/commentService";
+import DeleteCommentModal from "./modals/DeleteCommentModal";
+import UpdateCommentModal from "./modals/UpdateCommentModal";
+import { FaTrashAlt, FaEdit } from "react-icons/fa";
 
-const CommentSection = ({ subjectId, comments, onCommentAdded, onCommentDeleted, onCommentUpdated }) => {
-  const [newComment, setNewComment] = useState('');
-  const { authState } = useContext(AuthContext);
+const CommentSection = ({
+  subjectId,
+  comments,
+  onCommentAdded,
+  onCommentDeleted,
+  onCommentUpdated,
+  userId,
+}) => {
+  const [newComment, setNewComment] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedComment, setSelectedComment] = useState(null);
 
   const handleAddComment = async () => {
-    if (newComment.trim() === '') return;
+    if (newComment.trim() === "") return;
     try {
       const commentData = { content: newComment };
-      await createComment(subjectId, commentData, authState.token);
-      setNewComment('');
+      await createComment(subjectId, commentData);
+      setNewComment("");
       onCommentAdded();
     } catch (error) {
-      console.error('Failed to add comment', error);
+      console.error("Failed to add comment", error);
     }
   };
 
   const handleDeleteComment = async () => {
     try {
-      await deleteComment(selectedComment._id, authState.token);
+      await deleteComment(selectedComment._id);
       setIsDeleteModalOpen(false);
       onCommentDeleted();
     } catch (error) {
-      console.error('Failed to delete comment', error);
+      console.error("Failed to delete comment", error);
     }
   };
 
   const handleUpdateComment = async (updatedContent) => {
-    if (updatedContent.trim() === '') return;
+    if (updatedContent.trim() === "") return;
     try {
       const commentData = { content: updatedContent };
-      await updateComment(selectedComment._id, commentData, authState.token);
+      await updateComment(selectedComment._id, commentData);
       setIsUpdateModalOpen(false);
       onCommentUpdated();
     } catch (error) {
-      console.error('Failed to update comment', error);
+      console.error("Failed to update comment", error);
     }
   };
 
@@ -52,15 +61,20 @@ const CommentSection = ({ subjectId, comments, onCommentAdded, onCommentDeleted,
       {comments.length > 0 ? (
         <ul className="space-y-4 mb-4">
           {comments.map((comment) => (
-            <li key={comment._id} className="p-4 bg-gray-100 rounded-lg shadow flex justify-between items-start">
+            <li
+              key={comment._id}
+              className="p-4 bg-gray-100 rounded-lg shadow flex justify-between items-start"
+            >
               <div>
                 <p className="mb-2">{comment.content}</p>
                 <div className="flex items-center text-gray-500 text-sm">
                   <p className="mr-4">Auteur : {comment.author.username}</p>
-                  <p>Date : {new Date(comment.created_at).toLocaleDateString()}</p>
+                  <p>
+                    Date : {new Date(comment.created_at).toLocaleDateString()}
+                  </p>
                 </div>
               </div>
-              {authState.user.id === comment.author._id && (
+              {userId === comment.author._id && (
                 <div className="flex space-x-2">
                   <button
                     onClick={() => {
@@ -86,7 +100,9 @@ const CommentSection = ({ subjectId, comments, onCommentAdded, onCommentDeleted,
           ))}
         </ul>
       ) : (
-        <p className="text-gray-600 mb-4">Aucun commentaire associé à ce sujet.</p>
+        <p className="text-gray-600 mb-4">
+          Aucun commentaire associé à ce sujet.
+        </p>
       )}
       <div className="mt-4">
         <textarea

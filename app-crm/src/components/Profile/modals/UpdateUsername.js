@@ -1,34 +1,32 @@
-import React, { useState, useContext } from 'react';
-import { AuthContext } from '../../../context/AuthContext';
-import { updateUsername } from '../../../services/user/userService';
+import React, { useState } from "react";
+import { changeUsername } from "../../../services/user/userService";
 
 const UpdateUsername = ({ closeModal }) => {
-  const { authState } = useContext(AuthContext);
-  const [password, setPassword] = useState('');
-  const [newUsername, setNewUsername] = useState('');
-  const [message, setMessage] = useState('');
+  const [password, setPassword] = useState(""); // Mot de passe de l'utilisateur
+  const [newUsername, setNewUsername] = useState(""); // Nouveau nom d'utilisateur
+  const [message, setMessage] = useState(""); // Message d'erreur ou de succès
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await updateUsername(
-        authState.user.id,
-        password,
-        newUsername,
-        authState.token
-      );
-      setMessage(response.data.msg);
+      // Envoie d'abord le mot de passe, puis le nouveau nom d'utilisateur
+      await changeUsername(password, newUsername);
+      setMessage("Nom d'utilisateur mis à jour avec succès.");
       closeModal();
-      window.location.reload();
+      window.location.reload(); // Rafraîchissement de la page pour refléter les changements
     } catch (error) {
-      setMessage(error.response.data.msg || 'Server error');
-    }    
+      setMessage(error.response?.data?.msg || "Erreur serveur.");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-4 shadow-md">
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-md mx-auto mt-10 p-4 shadow-md"
+    >
       <h2 className="text-2xl mb-4">Mettre à jour le nom d'utilisateur</h2>
+
       <div className="mb-4">
         <label className="block text-gray-700">Nouveau nom d'utilisateur</label>
         <input
@@ -38,6 +36,7 @@ const UpdateUsername = ({ closeModal }) => {
           className="w-full px-3 py-2 border rounded"
         />
       </div>
+      {/* Champ pour le mot de passe */}
       <div className="mb-4">
         <label className="block text-gray-700">Mot de passe</label>
         <input
@@ -47,9 +46,14 @@ const UpdateUsername = ({ closeModal }) => {
           className="w-full px-3 py-2 border rounded"
         />
       </div>
-      <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
+
+      <button
+        type="submit"
+        className="bg-blue-500 text-white py-2 px-4 rounded"
+      >
         Mettre à jour
       </button>
+
       {message && <p className="mt-4 text-red-500">{message}</p>}
     </form>
   );

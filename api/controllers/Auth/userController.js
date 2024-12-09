@@ -9,17 +9,51 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
-// Utilitaires pour générer des tokens
-const generateAccessToken = (user) => {
-  return jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
-    expiresIn: "15m",
+// 1. Fonction utilitaire pour générer les tokens (AccessToken et RefreshToken)
+const generateTokens = (user) => {
+  const accessToken = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
+    expiresIn: "15m", // 2 minutes pour les tests
   });
+
+  const refreshToken = jwt.sign(
+    { id: user._id, roles: user.roles },
+    JWT_REFRESH_SECRET,
+    {
+      expiresIn: "7d", // 7 jours
+    }
+  );
+
+  return { accessToken, refreshToken };
 };
 
-const generateRefreshToken = (user) => {
-  return jwt.sign({ id: user._id, roles: user.roles }, JWT_REFRESH_SECRET, {
-    expiresIn: "7d",
+// 2. Fonction utilitaire pour enregistrer les tokens dans les cookies
+const setTokenCookies = (
+  res,
+  accessToken,
+  refreshToken,
+  expiresIn = 15 * 60 * 1000
+) => {
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    domain: ".go-hope.fr", // Inclure tous les sous-domaines
+    path: "/",
+    maxAge: 15 * 60 * 1000, // 15 minutes
   });
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    domain: ".go-hope.fr", // Inclure tous les sous-domaines
+    sameSite: "None",
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+  });
+
+  // Log pour vérifier ce qui est envoyé dans les en-têtes Set-Cookie
+  console.log("Set-Cookie headers envoyés : ", res.getHeaders()["set-cookie"]);
 };
 
 // 1. Fonction pour l'inscription d'un utilisateur
@@ -56,12 +90,15 @@ export const registerUser = async (req, res) => {
 
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
-
     await sendVerificationEmail(newUser.email);
+
+    // Générez les tokens et enregistrez-les dans les cookies
+    const { accessToken, refreshToken } = generateTokens(newUser);
+    setTokenCookies(res, accessToken, refreshToken);
 
     res.status(201).json({
       message:
-        "Utilisateur créé avec succès. Un email de vérification a été envoyé.",
+        "Utilisateur créé avec succès, un email de vérification a été envoyé !",
     });
   } catch (error) {
     console.error("Erreur lors de l'inscription :", error.message);
@@ -100,26 +137,14 @@ export const loginUser = async (req, res) => {
         .json({ message: "Identifiant ou mot de passe incorrect." });
     }
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+    // Générez les tokens et enregistrez-les dans les cookies
+    const { accessToken, refreshToken } = generateTokens(user);
+    setTokenCookies(res, accessToken, refreshToken);
 
-    // Stocke l'accessToken dans un cookie
-    res.cookie("accessToken", accessToken, {
-      httpOnly: false,
-      secure: false,
-      sameSite: "Lax",
-      maxAge: 15 * 60 * 1000, //
+    // Retournez également les tokens dans la réponse JSON pour Postman
+    res.status(200).json({
+      message: "Connexion réussie.",
     });
-
-    // Stocke le refreshToken dans un cookie
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "Strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    res.status(200).json({ message: "Connexion réussie." });
   } catch (error) {
     console.error("Erreur lors de la connexion :", error.message);
     res.status(500).json({ message: "Erreur serveur lors de la connexion." });
@@ -130,44 +155,74 @@ export const loginUser = async (req, res) => {
 export const refreshToken = (req, res) => {
   const refreshToken = req.cookies.refreshToken;
 
+  // Vérifiez si le refreshToken est présent dans les cookies
+  console.log(
+    "Token de rafraîchissement reçu dans les cookies : ",
+    refreshToken
+  );
+
   if (!refreshToken) {
+    console.log("Aucun refreshToken trouvé.");
     return res
       .status(401)
       .json({ message: "Token de rafraîchissement manquant." });
   }
 
+  // Vérification du refreshToken
   jwt.verify(refreshToken, JWT_REFRESH_SECRET, (err, decoded) => {
     if (err) {
+      console.error("Erreur de vérification du refreshToken : ", err);
       return res
         .status(403)
         .json({ message: "Token de rafraîchissement invalide ou expiré." });
     }
 
-    const newAccessToken = generateAccessToken(decoded);
+    console.log("Le refreshToken est valide. Données décodées : ", decoded);
 
-    // Stocke le nouveau accessToken dans un cookie
-    res.cookie("accessToken", newAccessToken, {
-      httpOnly: false,
-      secure: false,
-      sameSite: "Lax",
-      maxAge: 15 * 60 * 1000,
+    // Génération d'un nouveau accessToken
+    const newAccessToken = jwt.sign(
+      { id: decoded.id, roles: decoded.roles },
+      JWT_SECRET,
+      { expiresIn: "15m" } // Durée de validité du nouveau accessToken (15 minutes)
+    );
+
+    // Afficher le nouveau accessToken généré (pour le débogage)
+    console.log("Nouveau accessToken généré : ", newAccessToken);
+
+    // Renvoi de la réponse avec accessToken
+    res.status(200).json({
+      accessToken: newAccessToken,
+      message: "Token rafraîchi avec succès.",
     });
-
-    res.status(200).json({ message: "Token rafraîchi avec succès." });
   });
 };
 
 // 4. Fonction pour la déconnexion d'un utilisateur
 export const logoutUser = (req, res) => {
   try {
-    res.clearCookie("accessToken", {
-      httpOnly: false, // Désactivé pour les tests dans Postman
-      sameSite: "Lax",
-    });
+    // Vérifier si les cookies existent
+    const hasRefreshToken = req.cookies?.refreshToken;
+    const hasAccessToken = req.cookies?.accessToken;
+
+    if (!hasRefreshToken && !hasAccessToken) {
+      console.log("Aucun cookie de token trouvé. Utilisateur déjà déconnecté.");
+    }
+
+    // Effacer les cookies liés aux tokens
     res.clearCookie("refreshToken", {
-      httpOnly: true, // Toujours protégé
-      sameSite: "Strict",
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      path: "/",
     });
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      path: "/",
+    });
+
+    console.log("Cookies de déconnexion effacés avec succès.");
     res.status(200).json({ message: "Déconnexion réussie." });
   } catch (error) {
     console.error("Erreur lors de la déconnexion :", error.message);
@@ -179,33 +234,41 @@ export const logoutUser = (req, res) => {
 export const verifyEmail = async (req, res) => {
   const { email } = req.query;
 
+  // Validation de l'email
   if (!email) {
     return res.status(400).json({ message: "Email est requis." });
   }
 
   try {
+    // Recherche de l'utilisateur par email
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé." });
     }
 
+    // Si l'email a déjà été vérifié
     if (user.verifyEmail) {
-      return res.status(400).json({ message: "L'email a déjà été vérifié." });
+      // Redirection vers la page de connexion si l'email est déjà vérifié
+      return res.redirect("https://dev-app.go-hope.fr/login");
     }
 
+    // Marquer l'email comme vérifié
     user.verifyEmail = true;
     await user.save();
 
-    const accessToken = generateAccessToken(user);
+    // Génération des tokens
+    const { accessToken, refreshToken } = generateTokens(user);
 
-    res
-      .status(200)
-      .json({ message: "Email vérifié avec succès.", accessToken });
+    // Sauvegarde des tokens dans les cookies
+    setTokenCookies(res, accessToken, refreshToken);
+
+    // Redirection vers la page d'accueil après la vérification de l'email
+    return res.redirect("https://dev-app.go-hope.fr/");
   } catch (error) {
-    console.error("Erreur lors de la vérification de l'email :", error.message);
+    console.error("Erreur lors de la vérification de l'email:", error);
     res
       .status(500)
-      .json({ message: "Erreur serveur lors de la vérification de l'email." });
+      .json({ message: "Erreur lors de la vérification de l'email." });
   }
 };

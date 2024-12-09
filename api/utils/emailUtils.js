@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 
 // Fonction pour envoyer l'email de vérification
 export const sendVerificationEmail = async (email) => {
-  const verificationLink = `http://localhost:5000/api/auth/verify-email?email=${encodeURIComponent(
+  const verificationLink = `https://dev-api.go-hope.fr/api/auth/verify-email?email=${encodeURIComponent(
     email
   )}`;
 

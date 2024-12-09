@@ -1,16 +1,11 @@
-import API from "../axiosInstance";
-
-export const getCurrentUser = async () => {
-  const response = await API.get("/user/me"); // Utilise le cookie pour authentification
-  return response.data; // Retourne les données utilisateur
-};
+import axiosInstance from "../axiosInstance";
 
 export const changePassword = async (
   oldPassword,
   newPassword,
   confirmPassword
 ) => {
-  const response = await API.put("/user/password", {
+  const response = await axiosInstance.put("/user/password-update", {
     oldPassword,
     newPassword,
     confirmPassword,
@@ -19,7 +14,7 @@ export const changePassword = async (
 };
 
 export const changeUsername = async (password, newUsername) => {
-  const response = await API.put("/user/username", {
+  const response = await axiosInstance.put("/user/username-update", {
     password,
     newUsername,
   });
@@ -27,7 +22,7 @@ export const changeUsername = async (password, newUsername) => {
 };
 
 export const updateEmail = async (password, newEmail) => {
-  const response = await API.put("/user/email", {
+  const response = await axiosInstance.put("/user/email-update", {
     password,
     newEmail,
   });

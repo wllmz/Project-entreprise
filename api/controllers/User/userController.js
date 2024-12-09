@@ -44,6 +44,7 @@ export const changeUsername = async (req, res) => {
   try {
     const { password, newUsername } = req.body;
 
+    // 1. Vérification du mot de passe
     const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ msg: "Utilisateur non trouvé" });
@@ -54,17 +55,24 @@ export const changeUsername = async (req, res) => {
       return res.status(400).json({ msg: "Mot de passe incorrect" });
     }
 
+    // 2. Vérification de l'unicité du nom d'utilisateur
     const existingUser = await User.findOne({ username: newUsername });
     if (existingUser) {
       return res.status(400).json({ msg: "Nom d'utilisateur déjà utilisé" });
     }
 
+    // 3. Mise à jour du nom d'utilisateur
     user.username = newUsername;
     await user.save();
 
+    console.log("Nom d'utilisateur mis à jour :", user.username); // Log pour voir si la mise à jour s'est bien effectuée
+
     res.status(200).json({ msg: "Nom d'utilisateur mis à jour avec succès" });
   } catch (error) {
-    console.error(error);
+    console.error(
+      "Erreur serveur lors de la mise à jour du nom d'utilisateur :",
+      error
+    );
     res.status(500).json({ msg: "Erreur serveur" });
   }
 };

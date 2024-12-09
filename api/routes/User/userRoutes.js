@@ -13,12 +13,12 @@ const router = express.Router();
 router.get("/me", verifyToken, getCurrentUser);
 
 // Modifier le mot de passe
-router.put("/password", verifyToken, changePassword);
+router.put("/password-update", verifyToken, changePassword);
 
 // Modifier le nom d'utilisateur
-router.put("/username", verifyToken, changeUsername);
+router.put("/username-update", verifyToken, changeUsername);
 
 // Modifier l'email
-router.put("/email", verifyToken, updateEmail);
+router.put("/email-update", verifyToken, updateEmail);
 
 export default router;
