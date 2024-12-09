@@ -1,22 +1,20 @@
-import React, { useState, useContext } from 'react';
-import { AuthContext } from '../../../context/AuthContext';
-import { deleteUser } from '../../../services/admin/adminService';
+import React, { useState } from "react";
+import { deleteUser } from "../../../services/admin/adminService";
 
 const DeleteUser = ({ user, onClose }) => {
-  const { authState } = useContext(AuthContext);
-  const [adminPassword, setAdminPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [adminPassword, setAdminPassword] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await deleteUser(user._id, adminPassword, authState.token);
-      setMessage(response.data.message);
+      await deleteUser(user._id, { password: adminPassword });
+      setMessage("Utilisateur supprimé avec succès.");
       onClose();
       window.location.reload();
     } catch (error) {
-      setMessage(error.response.data.message || 'Server error');
+      setMessage(error.response?.data?.message || "Erreur serveur.");
     }
   };
 
@@ -30,8 +28,12 @@ const DeleteUser = ({ user, onClose }) => {
           value={adminPassword}
           onChange={(e) => setAdminPassword(e.target.value)}
           className="border p-2 rounded mb-4 w-full"
+          required
         />
-        <button type="submit" className="bg-red-500 text-white p-2 rounded w-full">
+        <button
+          type="submit"
+          className="bg-red-500 text-white p-2 rounded w-full"
+        >
           Supprimer
         </button>
         {message && <p className="mt-2 text-red-500">{message}</p>}

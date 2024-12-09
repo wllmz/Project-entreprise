@@ -1,74 +1,46 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  getCurrentUser as fetchCurrentUser,
-  logout as apiLogout,
-} from "../services/auth/authService";
+import { getAuthenticatedUser } from "../services/auth/authService"; // Importer le service pour /me
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [authState, setAuthState] = useState(null); // Stocke l'état utilisateur
-  const [loadingAuth, setLoadingAuth] = useState(true); // Charge initiale
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const checkAuthStatus = async () => {
       try {
-        const user = await fetchCurrentUser(); // Appel à l'API pour récupérer l'utilisateur
-        setAuthState({ user });
+        const authenticatedUser = await getAuthenticatedUser();
+        setUser(authenticatedUser);
       } catch (error) {
-        console.error("Non authentifié ou session expirée :", error);
-        setAuthState(null);
+        console.warn("Erreur d'authentification :", error);
+        setUser(null);
       } finally {
-        setLoadingAuth(false); // Fin de la charge initiale
+        setLoading(false);
       }
     };
-    fetchUser();
+
+    checkAuthStatus();
   }, []);
 
-  const login = async () => {
-    try {
-      const user = await fetchCurrentUser(); // Récupère les infos utilisateur après connexion
-      setAuthState({ user });
-      navigate("/"); // Redirige après connexion
-    } catch (error) {
-      console.error(
-        "Erreur lors de la récupération de l'utilisateur après connexion :",
-        error
-      );
-    }
+  const isAuthenticated = () => !!user;
+  const hasRole = (role) => user?.roles?.includes(role);
+
+  const logout = () => {
+    document.cookie =
+      "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    setUser(null);
+    navigate("/login");
   };
 
-  const logout = async () => {
-    try {
-      await apiLogout(); // Déconnexion via l'API
-      setAuthState(null);
-      navigate("/login");
-    } catch (error) {
-      console.error("Erreur lors de la déconnexion :", error);
-    }
-  };
-
-  const isAuthenticated = () => {
-    return !!authState?.user;
-  };
-
-  const isAdmin = () => {
-    return isAuthenticated() && authState.user.role === "admin";
-  };
+  if (loading) {
+    return <div>Chargement...</div>;
+  }
 
   return (
-    <AuthContext.Provider
-      value={{
-        authState,
-        loadingAuth,
-        login,
-        logout,
-        isAuthenticated,
-        isAdmin,
-      }}
-    >
+    <AuthContext.Provider value={{ user, isAuthenticated, hasRole, logout }}>
       {children}
     </AuthContext.Provider>
   );

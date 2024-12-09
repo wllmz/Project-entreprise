@@ -17,14 +17,7 @@ import commentRoutes from "./routes/Comments/commentRoutes.js";
 // Initialisation de l'application Express
 const app = express();
 
-// Configuration du middleware de limitation des requêtes globales
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes
-//   max: 100, // Limite à 100 requêtes par IP
-//   message:
-//     "Trop de requêtes effectuées depuis cette IP. Veuillez réessayer plus tard.",
-// });
-
+app.set("trust proxy", 1);
 // Fonction pour démarrer le serveur
 async function startServer() {
   try {
@@ -47,12 +40,50 @@ async function startServer() {
     app.use(express.json());
 
     // Middleware pour gérer les requêtes CORS
+    const allowedOrigins = ["https://dev-app.go-hope.fr"];
     app.use(
       cors({
-        origin: ["http://localhost:3000"],
+        origin: (origin, callback) => {
+          console.log("Origine de la requête :", origin);
+          if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+          } else {
+            console.error("Origine non autorisée :", origin);
+            callback(new Error("CORS non autorisé"));
+          }
+        },
         credentials: true,
       })
     );
+
+    app.use((req, res, next) => {
+      const originalSetHeader = res.setHeader;
+      res.setHeader = (name, value) => {
+        if (name.toLowerCase() === "set-cookie" && Array.isArray(value)) {
+          value = value.map((cookie) =>
+            cookie
+              .replace("SameSite=Lax", "SameSite=None")
+              .replace("SameSite=Strict", "SameSite=None")
+          );
+        }
+        originalSetHeader.call(res, name, value);
+      };
+      next();
+    });
+
+    // Logs pour diagnostiquer les requêtes entrantes
+    app.use((req, res, next) => {
+      console.log(`Requête reçue : ${req.method} ${req.url}`);
+      next();
+    });
+
+    // Logs des en-têtes envoyés
+    app.use((req, res, next) => {
+      res.on("finish", () => {
+        console.log("En-têtes envoyés :", res.getHeaders()["set-cookie"]);
+      });
+      next();
+    });
 
     // Routes
     app.use("/api/auth", authRoutes);
@@ -61,6 +92,14 @@ async function startServer() {
     app.use("/api/modules", moduleRoutes);
     app.use("/api/subjects", subjectRoutes);
     app.use("/api/comments", commentRoutes);
+
+    // Middleware de gestion des erreurs
+    app.use((err, req, res, next) => {
+      console.error("Erreur attrapée par le middleware :", err.stack);
+      res
+        .status(500)
+        .json({ message: "Une erreur s'est produite.", error: err.message });
+    });
 
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {

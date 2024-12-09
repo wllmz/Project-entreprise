@@ -1,30 +1,22 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login as loginAPI } from "../../services/auth/authService";
-import { AuthContext } from "../../context/AuthContext";
+import { loginUser } from "../../services/auth/authService"; // Connexion
 
 const LoginForm = () => {
   const [loginValue, setLoginValue] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useContext(AuthContext); // Fonction "login" du contexte
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await loginAPI(loginValue, password); // Appel à l'API pour se connecter
-      login(); // Met à jour le contexte en appelant /auth/me pour récupérer l'utilisateur
-      setError("");
-      navigate("/"); // Redirige vers la page d'accueil
+      const data = await loginUser(loginValue, password); // Connexion via le service
+      navigate("/"); // Navigue vers la page d'accueil
+      window.location.reload(); // Rafraîchissement de la page pour vérifier l'authentification
     } catch (error) {
-      setError(
-        "Échec de la connexion. Veuillez vérifier vos identifiants et réessayer."
-      );
-      console.error(
-        "Erreur lors de la connexion de l'utilisateur",
-        error.response?.data?.message || error.message
-      );
+      setError(error.response?.data?.message || "Échec de la connexion.");
+      console.error("Erreur lors de la connexion :", error);
     }
   };
 
@@ -42,6 +34,7 @@ const LoginForm = () => {
           className="w-full p-2 border border-gray-300 rounded"
           value={loginValue}
           onChange={(e) => setLoginValue(e.target.value)}
+          required
         />
       </div>
       <div className="mb-4">
@@ -51,6 +44,7 @@ const LoginForm = () => {
           className="w-full p-2 border border-gray-300 rounded"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
       </div>
       <button

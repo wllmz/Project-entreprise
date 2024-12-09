@@ -1,29 +1,27 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
-import { getModuleById } from '../../services/module/moduleService';
-import { FaArrowLeft, FaPlus, FaInfoCircle } from 'react-icons/fa';
-import AddSubject from '../subject/modals/AddSubject';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getModuleById } from "../../services/module/moduleService";
+import { FaArrowLeft, FaPlus, FaInfoCircle } from "react-icons/fa";
+import AddSubject from "../subject/modals/AddSubject";
 
 const ModuleDetailPage = () => {
   const { moduleId } = useParams();
   const [module, setModule] = useState(null);
-  const { authState } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (moduleId && authState.token) {
+    if (moduleId) {
       fetchModuleDetail();
     }
-  }, [moduleId, authState.token]);
+  }, [moduleId]);
 
   const fetchModuleDetail = async () => {
     try {
-      const data = await getModuleById(moduleId, authState.token);
+      const data = await getModuleById(moduleId);
       setModule(data);
     } catch (error) {
-      console.error('Failed to fetch module details', error);
+      console.error("Failed to fetch module details", error);
     }
   };
 
@@ -32,17 +30,26 @@ const ModuleDetailPage = () => {
   };
 
   if (!module) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    );
   }
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 shadow-lg bg-white rounded-lg">
-      <button onClick={() => navigate(-1)} className="mb-6 flex items-center text-blue-500">
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-6 flex items-center text-blue-500"
+      >
         <FaArrowLeft className="mr-2" /> Retour
       </button>
       <div className="border-b pb-4 mb-6">
         <h2 className="text-3xl font-bold mb-2">{module.module}</h2>
-        <p className="text-gray-600">Date de création : {new Date(module.created_at).toLocaleDateString()}</p>
+        <p className="text-gray-600">
+          Date de création : {new Date(module.created_at).toLocaleDateString()}
+        </p>
       </div>
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-2xl font-semibold">Sujets associés</h3>
@@ -61,8 +68,13 @@ const ModuleDetailPage = () => {
                 <div>
                   <h4 className="text-lg font-semibold">{subject.title}</h4>
                   <p className="text-gray-700">{subject.description}</p>
-                  <p className="text-sm text-gray-500">Auteur : {subject.author.username}</p>
-                  <p className="text-sm text-gray-500">Date de création : {new Date(subject.created_at).toLocaleDateString()}</p>
+                  <p className="text-sm text-gray-500">
+                    Auteur : {subject.author.username}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Date de création :{" "}
+                    {new Date(subject.created_at).toLocaleDateString()}
+                  </p>
                 </div>
                 <button
                   onClick={() => navigate(`/subjects/${subject._id}`)}
@@ -82,7 +94,6 @@ const ModuleDetailPage = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubjectAdded={handleSubjectAdded}
-        token={authState.token}
       />
     </div>
   );

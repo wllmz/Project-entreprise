@@ -25,4 +25,9 @@ router.post("/refresh-token", refreshToken);
 // Route pour vérifier l'email
 router.get("/verify-email", verifyEmail);
 
+router.get("/me", verifyToken, (req, res) => {
+  console.log("Utilisateur autorisé :", req.user); // Pour debug
+  res.status(200).json({ user: req.user }); // Retourner les infos utilisateur
+});
+
 export default router;

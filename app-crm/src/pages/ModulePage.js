@@ -1,29 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react';
-import ModuleDashboard from '../components/Modules/ModuleDashboard';
-import ModuleList from '../components/Modules/ModuleList';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
-import { getModules } from '../services/module/moduleService';
+import React, { useEffect, useState } from "react";
+import ModuleDashboard from "../components/Modules/ModuleDashboard";
+import ModuleList from "../components/Modules/ModuleList";
+import { getModules } from "../services/module/moduleService";
 
 const ModulePage = () => {
-  const navigate = useNavigate();
-  const { isAdmin, authState } = useContext(AuthContext);
   const [modules, setModules] = useState([]);
 
   useEffect(() => {
-    if (!isAdmin()) {
-      navigate('/');
-    } else {
-      fetchModules();
-    }
-  }, [isAdmin, navigate]);
+    fetchModules();
+  }, []);
 
   const fetchModules = async () => {
     try {
-      const data = await getModules(authState.token);
+      const data = await getModules();
       setModules(data);
     } catch (error) {
-      console.error('Failed to fetch modules', error);
+      console.error("Failed to fetch modules", error);
     }
   };
 

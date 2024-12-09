@@ -1,27 +1,25 @@
-import React, { useState, useContext, useEffect } from 'react';
-import AddModule from './modals/AddModule';
-import UpdateModule from './modals/UpdateModule';
-import DeleteModule from './modals/DeleteModule';
-import ModalWrapper from './modals/ModalWrapper';
-import { AuthContext } from '../../context/AuthContext';
-import { getModules } from '../../services/module/moduleService';
+import React, { useState, useEffect } from "react";
+import AddModule from "./modals/AddModule";
+import UpdateModule from "./modals/UpdateModule";
+import DeleteModule from "./modals/DeleteModule";
+import ModalWrapper from "./modals/ModalWrapper";
+import { getModules } from "../../services/module/moduleService";
 
 const ModuleList = () => {
   const [modules, setModules] = useState([]);
   const [selectedModule, setSelectedModule] = useState(null);
-  const [modalType, setModalType] = useState('');
-  const { authState } = useContext(AuthContext);
+  const [modalType, setModalType] = useState("");
 
   useEffect(() => {
     fetchModules();
-  }, [authState]);
+  }, []);
 
   const fetchModules = async () => {
     try {
-      const data = await getModules(authState.token);
+      const data = await getModules();
       setModules(data);
     } catch (error) {
-      console.error('Failed to fetch modules', error);
+      console.error("Failed to fetch modules", error);
     }
   };
 
@@ -32,24 +30,24 @@ const ModuleList = () => {
 
   const handleCloseModal = () => {
     setSelectedModule(null);
-    setModalType('');
+    setModalType("");
   };
 
   const renderModals = () => {
     switch (modalType) {
-      case 'add':
+      case "add":
         return (
           <ModalWrapper isOpen={true} onClose={handleCloseModal}>
             <AddModule onClose={handleCloseModal} />
           </ModalWrapper>
         );
-      case 'update':
+      case "update":
         return (
           <ModalWrapper isOpen={true} onClose={handleCloseModal}>
             <UpdateModule module={selectedModule} onClose={handleCloseModal} />
           </ModalWrapper>
         );
-      case 'delete':
+      case "delete":
         return (
           <ModalWrapper isOpen={true} onClose={handleCloseModal}>
             <DeleteModule module={selectedModule} onClose={handleCloseModal} />
@@ -78,13 +76,13 @@ const ModuleList = () => {
                 <td className="py-2 px-4">
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleOpenModal(module, 'update')}
+                      onClick={() => handleOpenModal(module, "update")}
                       className="bg-blue-500 text-white p-2 rounded"
                     >
                       Modifier
                     </button>
                     <button
-                      onClick={() => handleOpenModal(module, 'delete')}
+                      onClick={() => handleOpenModal(module, "delete")}
                       className="bg-red-500 text-white p-2 rounded"
                     >
                       Supprimer
@@ -97,7 +95,7 @@ const ModuleList = () => {
         </table>
       </div>
       <button
-        onClick={() => handleOpenModal(null, 'add')}
+        onClick={() => handleOpenModal(null, "add")}
         className="bg-green-500 text-white p-2 rounded mt-4"
       >
         Ajouter un Module
